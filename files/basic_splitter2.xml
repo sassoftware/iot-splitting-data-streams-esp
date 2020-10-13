@@ -1,0 +1,81 @@
+<project name="BasicSplitter2" threads="1" pubsub="auto" heartbeat-interval="1">
+  <metadata>
+    <meta id="studioUploadedBy">sasdemo</meta>
+    <meta id="studioUploaded">1571416466898</meta>
+    <meta id="studioModifiedBy">sasdemo</meta>
+    <meta id="studioModified">1572885318062</meta>
+    <meta id="layout">{"cq1":{"Compute1":{"x":-550,"y":-570},"Compute2":{"x":-285,"y":-565},"Source1":{"x":-420,"y":-700}}}</meta>
+  </metadata>
+  <contqueries>
+    <contquery name="cq1">
+      <windows>
+        <window-source pubsub="true" name="Source1">
+          <splitter-expr>
+            <expression><![CDATA[if left(name,1)<'N' then return 0 else return 1]]></expression>
+          </splitter-expr>
+          <schema>
+            <fields>
+              <field name="sequence" type="int64" key="true"/>
+              <field name="name" type="string"/>
+            </fields>
+          </schema>
+          <connectors>
+            <connector name="New_Connector_1" class="fs">
+              <properties>
+                <property name="type"><![CDATA[pub]]></property>
+                <property name="fsname"><![CDATA[@PROJDIR@/basic_splitter2_input.csv]]></property>
+                <property name="fstype"><![CDATA[csv]]></property>
+              </properties>
+            </connector>
+          </connectors>
+        </window-source>
+        <window-compute pubsub="true" name="Compute1">
+          <schema>
+            <fields>
+              <field name="sequence" type="int64" key="true"/>
+              <field name="name" type="string"/>
+            </fields>
+          </schema>
+          <output>
+            <field-expr><![CDATA[name]]></field-expr>
+          </output>
+          <connectors>
+            <connector class="fs" name="subConnector1">
+	       <properties>
+	          <property name="type"><![CDATA[sub]]></property>
+	          <property name="snapshot"><![CDATA[true]]></property>
+	          <property name="fsname"><![CDATA[@PROJDIR@/basic_splitter2_output1.csv]]></property>
+	          <property name="fstype"><![CDATA[csv]]></property>
+	        </properties>
+	      </connector>
+	  </connectors>
+        </window-compute>
+        <window-compute pubsub="true" name="Compute2">
+          <schema>
+            <fields>
+              <field name="sequence" type="int64" key="true"/>
+              <field name="name" type="string"/>
+            </fields>
+          </schema>
+          <output>
+            <field-expr><![CDATA[name]]></field-expr>
+          </output>
+           <connectors>
+           <connector class="fs" name="subConnector2">
+	       <properties>
+	          <property name="type"><![CDATA[sub]]></property>
+	          <property name="snapshot"><![CDATA[true]]></property>
+	          <property name="fsname"><![CDATA[@PROJDIR@/basic_splitter2_output2.csv]]></property>
+	          <property name="fstype"><![CDATA[csv]]></property>
+	        </properties>
+	      </connector>
+	  </connectors>
+        </window-compute>
+      </windows>
+      <edges>
+        <edge source="Source1" target="Compute1" slot="0"/>
+        <edge source="Source1" target="Compute2" slot="1"/>
+      </edges>
+    </contquery>
+  </contqueries>
+</project>

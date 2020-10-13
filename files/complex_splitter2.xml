@@ -1,0 +1,122 @@
+<project name="ComplexSplitter2" threads="1" pubsub="auto" heartbeat-interval="1">
+  <metadata>
+    <meta id="studioUploadedBy">sasdemo</meta>
+    <meta id="studioUploaded">1572983042008</meta>
+    <meta id="studioModifiedBy">sasdemo</meta>
+    <meta id="studioModified">1572984989298</meta>
+    <meta id="layout">{"cq1":{"Compute1":{"x":-410,"y":-595},"Compute2":{"x":-535,"y":-445},"Compute3":{"x":-280,"y":-445},"Source1":{"x":-410,"y":-705}}}</meta>
+  </metadata>
+  <contqueries>
+    <contquery name="cq1">
+      <windows>
+        <window-source pubsub="true" name="Source1">
+          <schema>
+            <fields>
+              <field name="sequence" type="int64" key="true"/>
+              <field name="city" type="string"/>
+              <field name="customer" type="string"/>
+            </fields>
+          </schema>
+          <connectors>
+            <connector name="New_Connector_1" class="fs">
+              <properties>
+                <property name="type"><![CDATA[pub]]></property>
+                <property name="fsname"><![CDATA[@PROJDIR@/complex_splitter2_input.csv]]></property>
+                <property name="fstype"><![CDATA[csv]]></property>
+              </properties>
+            </connector>
+          </connectors>
+        </window-source>
+        <window-compute pubsub="true" name="Compute1">
+          <splitter-expr>
+            <expression><![CDATA[split]]></expression>
+          </splitter-expr>
+          <expr-initialize>
+            <initializer type="int32"><![CDATA[integer split]]></initializer>
+            <udfs>
+              <udf name="myFunction" type="int32"><![CDATA[if city=="NYC" then
+    begin
+      split=1;
+      return split
+    end
+  else if city=="Raleigh" then
+    begin
+      split=2;
+      return split
+    end
+  else
+    begin
+      split=0;
+    end
+  return split]]></udf>
+            </udfs>
+          </expr-initialize>
+          <schema>
+            <fields>
+              <field name="sequence" type="int64" key="true"/>
+              <field name="city" type="string"/>
+              <field name="customer" type="string"/>
+              <field name="split" type="int32"/>
+            </fields>
+          </schema>
+          <output>
+            <field-expr><![CDATA[city]]></field-expr>
+            <field-expr><![CDATA[customer]]></field-expr>
+            <field-expr><![CDATA[myFunction()]]></field-expr>
+          </output>
+        </window-compute>
+        <window-compute pubsub="true" name="Compute2">
+          <schema>
+            <fields>
+              <field name="sequence" type="int64" key="true"/>
+              <field name="city" type="string"/>
+              <field name="customer" type="string"/>
+            </fields>
+          </schema>
+          <output>
+            <field-expr><![CDATA[city]]></field-expr>
+            <field-expr><![CDATA[customer]]></field-expr>
+          </output>
+          <connectors>
+            <connector class="fs" name="subConnector1">
+	       <properties>
+	          <property name="type"><![CDATA[sub]]></property>
+	          <property name="snapshot"><![CDATA[true]]></property>
+	          <property name="fsname"><![CDATA[@PROJDIR@/complex_splitter2_output1.csv]]></property>
+	          <property name="fstype"><![CDATA[csv]]></property>
+	        </properties>
+	      </connector>
+	  </connectors>
+        </window-compute>
+        <window-compute pubsub="true" name="Compute3">
+          <schema>
+            <fields>
+              <field name="sequence" type="int64" key="true"/>
+              <field name="city" type="string"/>
+              <field name="customer" type="string"/>
+            </fields>
+          </schema>
+          <output>
+            <field-expr><![CDATA[city]]></field-expr>
+            <field-expr><![CDATA[customer]]></field-expr>
+          </output>
+          <connectors>
+            <connector class="fs" name="subConnector2">
+	       <properties>
+	          <property name="type"><![CDATA[sub]]></property>
+	          <property name="snapshot"><![CDATA[true]]></property>
+	          <property name="fsname"><![CDATA[@PROJDIR@/complex_splitter2_output2.csv]]></property>
+	          <property name="fstype"><![CDATA[csv]]></property>
+	        </properties>
+	      </connector>
+	  </connectors>
+        </window-compute>
+      </windows>
+      <edges>
+        <edge source="Source1" target="Compute1"/>
+        <edge source="Compute1" target="Compute2" slot="1"/>
+        <edge source="Compute1" target="Compute3" slot="2"/>
+      </edges>
+    </contquery>
+  </contqueries>
+</project>
