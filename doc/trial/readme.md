@@ -12,7 +12,7 @@
 
 Once registered, you will receive an e-mail message with a link to your environment in the SAS Cloud.
 
-<img src='images/email.png'>
+<img src='../../images/email.png'>
 
 Click the provided link and proceed to log onto the environment.
 
