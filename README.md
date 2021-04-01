@@ -1,5 +1,7 @@
 # Splitting Data Streams in ESP
 
+<img src="https://img.shields.io/badge/Category-Tutorial-blue"> <img src="https://img.shields.io/badge/Sub--Category-Splitting%20Data%20Stream-yellowgreen"> <img src="https://img.shields.io/badge/Difficulty-Intermediate-yellow"> <img src="https://img.shields.io/badge/Updated-Apr%202020-orange">
+
 This repository contains example ESP projects and data which will help you incorporate splitters into your ESP streaming models
 
 ## Introduction
